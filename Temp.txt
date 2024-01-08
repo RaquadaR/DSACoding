@@ -1,0 +1,63 @@
+[Common function]:
+
+Ajax common options in util.
+
+Singular pattern for console.log.
+-- Dependency injection for logs ?
+--Map for usage ( https://github.com/ing-bank/lion/blob/master/packages%2Fsingleton-manager%2Fsrc%2FSingletonManagerClass.js)
+
+
+Adapter pattern for global form function usage.
+
+ContentJCR overrides without doing each changes queryselector label change can do it through util as generic design.
+
+Error handling is also controlled from util with generic structure that handles global and local error messages.
+
+Try to design an independent module without much parent dependency, to use it anywhere directly.
+
+Util for client condition where it handles all the client checks.
+
+Find some generic way to hide and show the content of the page. Instead of hiding and showing every time on each page.
+
+Eslint & Preetier.
+
+DeepClone for object mainly on widget level.
+
+Clsx for class name conditionally.
+
+ADA support for Page, Modal, Drawer.
+
+ID naming standard: (try for unique ID) 
+[ uuid]
+- create a helper that can generate prefix for ID to support both hbs and js 
+
+ => {Module name short}-IDName
+  Ex: ah-email-module (aem-idname)
+Q: if we face an issue like ah-enroll-module both are same suffix.
+
+
+
+[PAGES]
+
+1. Phone/Email Selection module  (Single/Multiple Selection).
+
+2. Add phone number Module.
+
+3. Enter Module.
+
+4. Card Entry Module. (Debit/Credit/CVV/Multiple Card PIN Selection).
+      - Debit Card Number with Expiry and PIN.
+      - Expiry + CVV.
+      - Create a config to display based on rules.
+      - Onload makes the decision to display order or remove content.
+
+5. Core Module (
+    - Handles all the modules to display/hide based on Client.
+    - Remove Modules based on clients if it is not going to use it.
+    - Custom Module (multiple module integration) and API validation on core module handling.
+    - Higher Order Module : which contains more than one module to display in screen and API validation function to pass it.
+)
+
+
+
+Queries: Why we need a util for module specific as module have less content that can handle by itself ?
