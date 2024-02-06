@@ -24,3 +24,34 @@ const instance = new MyClass();
 const methods = getMethods(instance);
 console.log(methods); // Output: ['methodOne', 'methodTwo']
 
+
+
+// Assuming you have a class like this:
+class MyClass {
+  constructor() {
+    // ...
+  }
+
+  originalMethod() {
+    // Original method logic
+  }
+}
+
+// To add a function call without modifying the original method:
+MyClass.prototype.originalMethod = (function (originalMethod) {
+  return function () {
+    // Before the original method
+    console.log('Before the original method');
+
+    // Call the original method
+    originalMethod.apply(this, arguments);
+
+    // After the original method
+    console.log('After the original method');
+  };
+})(MyClass.prototype.originalMethod);
+
+// Usage:
+const instance = new MyClass();
+instance.originalMethod(); // This will now log before and after the original method
+
