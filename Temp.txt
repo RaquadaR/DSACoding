@@ -3,3 +3,24 @@
 Ajax common options in util.
 
 Singular patterns 
+
+const getMethods = (obj) => {
+  let properties = new Set();
+  let currentObj = obj;
+  do {
+    Object.getOwnPropertyNames(currentObj).forEach(item => properties.add(item));
+  } while ((currentObj = Object.getPrototypeOf(currentObj)));
+  return Array.from(properties.values()).filter(item => typeof obj[item] === 'function');
+};
+
+
+class MyClass {
+  constructor() {}
+  methodOne() {}
+  methodTwo() {}
+}
+
+const instance = new MyClass();
+const methods = getMethods(instance);
+console.log(methods); // Output: ['methodOne', 'methodTwo']
+
