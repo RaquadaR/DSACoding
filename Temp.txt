@@ -55,3 +55,40 @@ MyClass.prototype.originalMethod = (function (originalMethod) {
 const instance = new MyClass();
 instance.originalMethod(); // This will now log before and after the original method
 
+
+class MyClass {
+  constructor() {
+    // Initialization code
+  }
+
+  myMethod() {
+    // Method code
+  }
+}
+
+// Define a handler for the Proxy
+const handler = {
+  apply: function(target, thisArg, argumentsList) {
+    console.log('Calling method:', target.name);
+    return target.apply(thisArg, argumentsList);
+  }
+};
+
+// Create an instance of MyClass
+const instance = new MyClass();
+
+// Create a Proxy for the instance's methods
+const instanceProxy = new Proxy(instance, {
+  get: function(target, prop) {
+    if (typeof target[prop] === 'function') {
+      // Return a bound version of the method wrapped with the handler
+      return new Proxy(target[prop], handler);
+    }
+    return target[prop];
+  }
+});
+
+// Now when you call a method through the proxy, the handler will intercept it
+instanceProxy.myMethod(); // Will log "Calling method: myMethod"
+
+
