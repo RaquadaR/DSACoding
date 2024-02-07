@@ -145,6 +145,5 @@ class MyClass {
 const myInstance = new MyClass();
 
 // Call the function via the proxy
-myInstance.myFunction(); // Logs the method call and executes the original function
-
+myInstance.myFunction(); // Logs the method call and executes the original function..
 
