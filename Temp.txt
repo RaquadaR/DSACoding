@@ -116,3 +116,35 @@ const MyClassProxy = new Proxy(MyClass, handler);
 // Now you can instantiate MyClass through the proxy
 const instance = new MyClassProxy();
 
+
+
+class MyClass {
+  constructor() {
+    // Create a proxy for the class instance
+    return new Proxy(this, {
+      get(target, prop, receiver) {
+        // Intercept function calls
+        const origMethod = target[prop];
+        if (typeof origMethod === 'function') {
+          return function (...args) {
+            console.log(`Calling method ${prop} with arguments:`, args);
+            return origMethod.apply(target, args);
+          };
+        }
+        return origMethod;
+      }
+    });
+  }
+
+  myFunction() {
+    console.log('Original function call');
+  }
+}
+
+// Create an instance of MyClass using the proxy
+const myInstance = new MyClass();
+
+// Call the function via the proxy
+myInstance.myFunction(); // Logs the method call and executes the original function
+
+
