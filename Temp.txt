@@ -147,3 +147,60 @@ const myInstance = new MyClass();
 // Call the function via the proxy
 myInstance.myFunction(); // Logs the method call and executes the original function..
 
+
+// Define your class
+class MyClass {
+  constructor() {
+    console.log('MyClass instance created');
+  }
+
+  greet() {
+    console.log('Hello, world!');
+  }
+
+  // Additional methods can be added here
+}
+
+// Function to log before calling the original method
+function logBeforeExecution(target, key, descriptor) {
+  let originalFunction = descriptor.value;
+  descriptor.value = function(...args) {
+    console.log(`About to call method: ${key}`);
+    return originalFunction.apply(this, args);
+  };
+  return descriptor;
+}
+
+// Create a proxy for the class constructor
+const handler = {
+  construct(target, args) {
+    console.log('Intercepted construction');
+    
+    // Create the instance normally
+    const instance = new target(...args);
+
+    // Iterate over the instance's prototype and apply decorators to all methods
+    Object.getOwnPropertyNames(Object.getPrototypeOf(instance)).forEach(methodName => {
+      if (typeof instance[methodName] === 'function') {
+        Object.defineProperty(instance, methodName, logBeforeExecution(target.prototype, methodName, {
+          value: instance[methodName],
+          writable: true,
+          configurable: true,
+          enumerable: false
+        }));
+      }
+    });
+
+    return instance;
+  }
+};
+
+// Create a proxy for the class
+const MyClassProxy = new Proxy(MyClass, handler);
+
+// Now you can instantiate MyClass through the proxy
+const instance = new MyClassProxy(); // Output: "Intercepted construction"
+
+// Call the modified method
+instance.greet(); // Output: "About to call method: greet" followed by "Hello, world!"
+
