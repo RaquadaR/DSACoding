@@ -1,4 +1,4 @@
-[Common function]:
+oo[Common function]:
 
 Ajax common options in util.
 
@@ -91,4 +91,28 @@ const instanceProxy = new Proxy(instance, {
 // Now when you call a method through the proxy, the handler will intercept it
 instanceProxy.myMethod(); // Will log "Calling method: myMethod"
 
+// Define your class
+class MyClass {
+  constructor() {
+    console.log('MyClass instance created');
+  }
+
+  sayHello() {
+    console.log('Hello!');
+  }
+}
+
+// Create a handler for the proxy
+const handler = {
+  construct(target, args) {
+    console.log('Intercepted construction');
+    return new target(...args);
+  }
+};
+
+// Create a proxy for the class
+const MyClassProxy = new Proxy(MyClass, handler);
+
+// Now you can instantiate MyClass through the proxy
+const instance = new MyClassProxy();
 
