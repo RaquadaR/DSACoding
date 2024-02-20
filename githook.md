@@ -105,3 +105,20 @@ check.dependsOn runPreCommitHook
 This will run the `pre-commit.sh` script before the `check` task, which is typically used to run tests [2].
 
 By integrating the pre-commit hook into the build process, you ensure that it's automatically run for anyone who builds your application, without requiring them to manually set up Git hooks.
+
+
+function maskPhoneNumberWithHyphens(phoneNumber) {
+    // Remove any existing hyphens or spaces
+    let cleanedNumber = phoneNumber.replace(/[- ]/g, '');
+    
+    // Replace all characters except the last four digits with asterisks
+    let maskedNumber = cleanedNumber.replace(/\d(?=\d{4})/g, "*");
+    
+    // Insert hyphens every three digits
+    maskedNumber = maskedNumber.replace(/(\d{3})/g, '$1-');
+    
+    // Remove the last hyphen
+    maskedNumber = maskedNumber.slice(0, -1);
+    
+    return maskedNumber;
+}
