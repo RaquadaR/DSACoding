@@ -46,3 +46,62 @@ To create a pre-commit hook using Bash, you can follow these steps:
    Save this script as `install-hooks.sh` and make it executable. Team members can run this script to automatically set up the pre-commit hook in their local repository [4].
 
 Remember to commit and push the `pre-commit.sh` and `install-hooks.sh` scripts to your repository, so that they are available to others who clone your repository.
+
+
+To automate the installation of pre-commit hooks for a Java application, you can use a combination of Git hooks and a build tool like Maven or Gradle to execute the hooks during the build process. Here's how you can set it up:
+
+1. **Create a Bash script for your pre-commit hook**: Write a Bash script that contains the checks or actions you want to perform before a commit. For example, you might want to check for code style or run tests.
+
+2. **Place the script in your repository**: Add the script to your repository, and make sure it's executable.
+
+3. **Configure the build tool**: If you're using Maven or Gradle, you can configure them to run the pre-commit hook as part of the build process. For Maven, you can use the `exec-maven-plugin` to execute the script. For Gradle, you can use the `Exec` task type.
+
+4. **Update the build configuration file**: Modify your `pom.xml` (for Maven) or `build.gradle` (for Gradle) to include the execution of the pre-commit hook script.
+
+5. **Commit and push the changes**: Commit the updated build configuration file and the pre-commit hook script to your repository.
+
+6. **Educate your team**: Make sure your team members are aware of the changes and know how to run the build process, which will now include the pre-commit hook.
+
+By following these steps, you're ensuring that the pre-commit hook is part of the build process. Whenever someone clones your repository and runs the build, the pre-commit hook will be executed, ensuring that the checks are performed without requiring additional setup.
+
+Here's an example of how you might configure a Maven `pom.xml` to run a pre-commit hook:
+
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.0.0</version>
+            <executions>
+                <execution>
+                    <id>pre-commit-hook</id>
+                    <phase>validate</phase>
+                    <goals>
+                        <goal>exec</goal>
+                    </goals>
+                    <configuration>
+                        <executable>./pre-commit.sh</executable>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```
+
+In this example, the `pre-commit.sh` script is executed during the `validate` phase of the Maven build. Adjust the `<executable>` path to point to your pre-commit hook script and the `<phase>` to the appropriate Maven phase [0][1].
+
+For Gradle, you would add something like this to your `build.gradle`:
+
+```groovy
+task runPreCommitHook(type: Exec) {
+    commandLine './pre-commit.sh'
+}
+
+check.dependsOn runPreCommitHook
+```
+
+This will run the `pre-commit.sh` script before the `check` task, which is typically used to run tests [2].
+
+By integrating the pre-commit hook into the build process, you ensure that it's automatically run for anyone who builds your application, without requiring them to manually set up Git hooks.
