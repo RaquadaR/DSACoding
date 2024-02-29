@@ -151,4 +151,29 @@ fi
 exit 0
 
 
+
+
+
+
+#!/bin/sh
+
+# Define the condition to search for
+CONDITION='your_condition'
+
+# Iterate through staged files
+git diff --cached --name-only | while read file; do
+    # Check if the file content matches the condition and print line numbers
+    grep -n "$CONDITION" "$file" | while read -r line; do
+        echo "Error found '$CONDITION' in $file: $line"
+    done
+done
+
+# Exit with an error if any condition was met
+if [ $? -eq 0 ]; then
+    echo "One or more conditions were met. Commit aborted."
+    exit 1
+fi
+
+exit 0
+
 ```
