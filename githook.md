@@ -109,7 +109,7 @@ By integrating the pre-commit hook into the build process, you ensure that it's 
 
 ```bash
 
-#!/bin/sh
+#!/bin/bash
 
 # Define the conditions
 CONDITIONS=(
@@ -137,13 +137,18 @@ for file in $(git diff --cached --name-only); do
     # Check if the file content matches the condition
     if grep -q "$condition" "$file"; then
       echo "Error: Found '$condition' in $file"
-      # Exit with an error to prevent the commit
-      exit 1
+      # Continue checking other files and conditions
     fi
   done
 done
 
-# If no conditions were met, allow the commit
+# If any condition was met, exit with an error to prevent the commit
+if [ $? -eq 0 ]; then
+    echo "One or more conditions were met. Commit aborted."
+    exit 1
+fi
+
 exit 0
+
 
 ```
