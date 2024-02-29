@@ -107,18 +107,43 @@ This will run the `pre-commit.sh` script before the `check` task, which is typic
 By integrating the pre-commit hook into the build process, you ensure that it's automatically run for anyone who builds your application, without requiring them to manually set up Git hooks.
 
 
-function maskPhoneNumberWithHyphens(phoneNumber) {
-    // Remove any existing hyphens or spaces
-    let cleanedNumber = phoneNumber.replace(/[- ]/g, '');
-    
-    // Replace all characters except the last four digits with asterisks
-    let maskedNumber = cleanedNumber.replace(/\d(?=\d{4})/g, "*");
-    
-    // Insert hyphens every three digits
-    maskedNumber = maskedNumber.replace(/(\d{3})/g, '$1-');
-    
-    // Remove the last hyphen
-    maskedNumber = maskedNumber.slice(0, -1);
-    
-    return maskedNumber;
-}
+```bash
+
+#!/bin/sh
+
+# Define the conditions
+CONDITIONS=(
+  'condition1'
+  'condition2'
+  'condition3'
+  'condition4'
+  'condition5'
+  'condition6'
+  'condition7'
+  'condition8'
+  'condition9'
+  'condition10'
+  'condition11'
+  'condition12'
+  'condition13'
+  'condition14'
+  'condition15'
+)
+
+# Iterate through staged files
+for file in $(git diff --cached --name-only); do
+  # Iterate through conditions
+  for condition in "${CONDITIONS[@]}"; do
+    # Check if the file content matches the condition
+    if grep -q "$condition" "$file"; then
+      echo "Error: Found '$condition' in $file"
+      # Exit with an error to prevent the commit
+      exit 1
+    fi
+  done
+done
+
+# If no conditions were met, allow the commit
+exit 0
+
+```
