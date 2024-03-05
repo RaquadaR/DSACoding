@@ -181,19 +181,38 @@ exit 0
 
 ```js
 function collectDivData(divId) {
-    // Assuming the div contains input elements with name attributes
-    const div = document.getElementById(divId);
-    const inputs = div.querySelectorAll('input');
-    let data = {};
+ const div = document.getElementById(divId);
+ const data = {};
 
-    inputs.forEach(input => {
-        if (input.name) {
-            data[input.name] = input.value;
-        }
-    });
+ // Function to handle radio button data
+ const handleRadioButtons = (radioName, value) => {
+    if (!data[radioName]) {
+      data[radioName] = value;
+    }
+ };
 
-    // You can extend this to handle other types of input elements as needed
-    return data;
+ // Function to handle checkbox data
+ const handleCheckboxes = (checkboxName, value) => {
+    if (!data[checkboxName]) {
+      data[checkboxName] = [];
+    }
+    data[checkboxName].push(value);
+ };
+
+ div.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+    if (input.type === 'radio' && input.checked) {
+      handleRadioButtons(input.name, input.value);
+    } else if (input.type === 'checkbox' && input.checked) {
+      handleCheckboxes(input.name, input.value);
+    }
+ });
+
+ return data;
 }
+
+// Example usage
+const divData = collectDivData('myDivId');
+console.log(divData);
+
 
 ```
