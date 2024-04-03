@@ -84,3 +84,17 @@ Citations:
 [7] https://ably.com/blog/web-app-websockets-nodejs
 [8] https://www.youtube.com/watch?v=RL_E56NPSN0
 [9] https://medium.com/@kartikpatel_97737/building-a-node-js-websocket-chat-app-with-socket-io-437f3ba65b
+
+
+@keyframes typing {
+  0%, 100% {
+    transform: translateY(0);
+ }
+  50% {
+    transform: translateY(-10px);
+ }
+}
+
+.message {
+ animation: typing 1s infinite;
+}
