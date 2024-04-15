@@ -216,7 +216,7 @@ console.log(divData);
 
 
 ```
-
+```bash
 
 #!/bin/bash
 
@@ -248,3 +248,4 @@ for file in $stagedFiles; do
     done
 done
 
+```
