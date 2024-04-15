@@ -342,3 +342,57 @@ if $errorFound; then
 fi
 
 ```
+
+
+```bash
+
+#!/bin/bash
+
+# Define forbidden words
+declare -a forbiddenWords=("forbiddenWord1" "forbiddenWord2" "forbiddenWord3")
+
+# Fetch staged files
+stagedFiles=$(git diff --cached --name-only)
+
+# Initialize error flag and file counter
+errorFound=false
+fileCounter=1
+
+# Check each staged file
+while IFS= read -r file; do
+ echo "Checking file $fileCounter: $file"
+ # Initialize error list for the current file
+ errorsForFile=""
+ lineNumber=0
+ # Check each line in the file
+ while IFS= read -r line || [ -n "$line" ]; do
+    lineNumber=$((lineNumber+1))
+    # Split the line into columns
+    IFS=' ' read -ra columns <<< "$line"
+    for word in "${forbiddenWords[@]}"; do
+      for i in "${!columns[@]}"; do
+        if [[ "${columns[$i]}" == *"$word"* ]]; then
+          # Use AWK to find the column number
+          columnNumber=$(awk -v word="$word" -v line="$line" 'BEGIN{split(line,a," "); for(i=1;i<=NF;i++) if(a[i]==word) print i; exit}' <<< "$line")
+          errorsForFile+="Error in line $lineNumber, column $columnNumber: '$word' found in '$line'\n"
+          errorFound=true
+        fi
+      done
+    done
+ done < "$file"
+ # Display errors for the current file
+ if [ -n "$errorsForFile" ]; then
+    echo -e "$errorsForFile"
+ else
+    echo "No forbidden words found in $file"
+ fi
+ fileCounter=$((fileCounter+1))
+done <<< "$stagedFiles"
+
+# Prevent commit if any errors were found
+if $errorFound; then
+ echo "Commit prevented due to forbidden words."
+ exit 1
+fi
+
+```
