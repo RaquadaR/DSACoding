@@ -249,3 +249,48 @@ for file in $stagedFiles; do
 done
 
 ```
+
+
+```bash
+#!/bin/bash
+
+# Define the forbidden words array
+forbidden_words=("word1" "word2" "word3")
+
+# Fetch the list of staged files
+staged_files=$(git diff --cached --name-only)
+
+# Initialize a flag to indicate if any forbidden words were found
+forbidden_found=false
+
+# Loop through each staged file
+while IFS= read -r file; do
+ # Loop through each forbidden word
+ for word in "${forbidden_words[@]}"; do
+    # Use grep to search for the forbidden word in the file
+    # -n prints the line number
+    # -H prints the filename for each match
+    # -r recursively searches directories
+    # -l lists only the names of files with matching lines
+    # -w matches the whole word
+    # -i ignores case
+    grep -nHrilw -e "$word" "$file" | while read -r line; do
+      # If a forbidden word is found, set the flag to true
+      forbidden_found=true
+      # Display the file name, the text, and the line number
+      echo "Forbidden word found: $line"
+    done
+ done
+done <<< "$staged_files"
+
+# If any forbidden words were found, prevent the commit
+if $forbidden_found; then
+ echo "Commit prevented due to forbidden words."
+ exit 1
+fi
+
+# If no forbidden words were found, allow the commit
+echo "No forbidden words found. Commit allowed."
+exit 0
+
+```
