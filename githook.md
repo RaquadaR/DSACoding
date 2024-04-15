@@ -450,3 +450,65 @@ fi
 
 
 ```
+
+
+```bash
+
+#!/bin/bash
+
+# Define forbidden words
+declare -a forbiddenWords=("forbiddenWord1" "forbiddenWord2" "forbiddenWord3")
+
+# Define file extensions to include
+declare -a includeExtensions=("txt" "md" "js")
+
+# Fetch staged files
+stagedFiles=$(git diff --cached --name-only)
+
+# Filter staged files by file extension
+filteredFiles=""
+for file in $stagedFiles; do
+ for ext in "${includeExtensions[@]}"; do
+    if [[ $file == *.${ext} ]]; then
+      filteredFiles+="$file"$'\n'
+      break
+    fi
+ done
+done
+
+# Initialize error flag and file counter
+errorFound=false
+fileCounter=1
+
+# Check each filtered file
+while IFS= read -r file; do
+ echo "Checking file $fileCounter: $file"
+ # Initialize error list for the current file
+ errorsForFile=""
+ lineNumber=0
+ # Check each line in the file
+ while IFS= read -r line || [ -n "$line" ]; do
+    lineNumber=$((lineNumber+1))
+    for word in "${forbiddenWords[@]}"; do
+      if [[ $line == *"$word"* ]]; then
+        errorsForFile+="Error in line $lineNumber: '$word' found in '$line'\n"
+        errorFound=true
+      fi
+    done
+ done < "$file"
+ # Display errors for the current file
+ if [ -n "$errorsForFile" ]; then
+    echo -e "$errorsForFile"
+ else
+    echo "No forbidden words found in $file"
+ fi
+ fileCounter=$((fileCounter+1))
+done <<< "$filteredFiles"
+
+# Prevent commit if any errors were found
+if $errorFound; then
+ echo "Commit prevented due to forbidden words."
+ exit 1
+fi
+
+```
