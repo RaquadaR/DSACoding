@@ -396,3 +396,57 @@ if $errorFound; then
 fi
 
 ```
+
+
+```bash
+#!/bin/bash
+
+# Define forbidden words
+declare -a forbiddenWords=("forbiddenWord1" "forbiddenWord2" "forbiddenWord3")
+
+# Define files or patterns to exclude
+declare -a excludeFiles=(".bash_profile" ".zshrc" "path/to/exclude/*")
+
+# Fetch staged files and exclude specified files
+stagedFiles=$(git diff --cached --name-only)
+for excludeFile in "${excludeFiles[@]}"; do
+ stagedFiles=$(echo "$stagedFiles" | grep -v "$excludeFile")
+done
+
+# Initialize error flag and file counter
+errorFound=false
+fileCounter=1
+
+# Check each staged file
+while IFS= read -r file; do
+ echo "Checking file $fileCounter: $file"
+ # Initialize error list for the current file
+ errorsForFile=""
+ lineNumber=0
+ # Check each line in the file
+ while IFS= read -r line || [ -n "$line" ]; do
+    lineNumber=$((lineNumber+1))
+    for word in "${forbiddenWords[@]}"; do
+      if [[ $line == *"$word"* ]]; then
+        errorsForFile+="Error in line $lineNumber: '$word' found in '$line'\n"
+        errorFound=true
+      fi
+    done
+ done < "$file"
+ # Display errors for the current file
+ if [ -n "$errorsForFile" ]; then
+    echo -e "$errorsForFile"
+ else
+    echo "No forbidden words found in $file"
+ fi
+ fileCounter=$((fileCounter+1))
+done <<< "$stagedFiles"
+
+# Prevent commit if any errors were found
+if $errorFound; then
+ echo "Commit prevented due to forbidden words."
+ exit 1
+fi
+
+
+```
