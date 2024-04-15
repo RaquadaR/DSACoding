@@ -216,3 +216,35 @@ console.log(divData);
 
 
 ```
+
+
+#!/bin/bash
+
+# Array of forbidden words
+forbiddenWords=("word1" "word2" "word3")
+
+# Fetch the staged files
+stagedFiles=$(git diff --name-only --cached)
+
+# Iterate over each staged file
+for file in $stagedFiles; do
+    # Iterate over each forbidden word
+    for word in "${forbiddenWords[@]}"; do
+        # Check if the file contains the forbidden word
+        while IFS= read -r line; do
+            # Extract the line number and text
+            lineNumber=$(echo "$line" | cut -d: -f1)
+            text=$(echo "$line" | cut -d: -f2-)
+            
+            # Check if the line contains the forbidden word
+            if [[ $text == *"$word"* ]]; then
+                echo "File: $file"
+                echo "Line: $lineNumber"
+                echo "Text: $text"
+                echo "Word found: $word"
+                echo "-------------------------"
+            fi
+        done < <(grep -n "$word" "$file")
+    done
+done
+
